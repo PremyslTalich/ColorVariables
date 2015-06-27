@@ -17,3 +17,7 @@ For example, changing chat prefix color requires to edit just one line in `color
 3. If you need some new variables, create them with `CAddVariable`
 4. If you want, you can create a forwarded variable for other plugins to use (like `{isRebel CLIENT_INDEX}`, `{isZombie CLIENT_INDEX}`, `{rainbow}` etc.)
 5. If you want to use variables from other plugins, load them with `CLoadPluginConfig` or `CLoadPluginVariables` (If server master renamed plugin binary, this won't work!)
+
+Examples:
+Old: `PrintToChatAll("\x02[prefix]\x01 %N gave you \x03AK-47\x01!")`
+New: `CPrintToChatAll("%N gave you {highlight}AK-47{default}!")`
