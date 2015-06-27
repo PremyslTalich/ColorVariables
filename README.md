@@ -2,6 +2,8 @@
 ColorVariables moves setting the colors in chat messages from plugin developers to server masters. It allows server masters to set colors for all plugins (with ColorVariables) in one simple step.
 For example, changing chat prefix color requires to edit just one line in `colorvariables/global.cfg` config. And it works for one or all plugins with ColorVariables.
 
+---
+
 ###How does it work?
 
 #####Plugin developer:
