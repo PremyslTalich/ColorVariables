@@ -29,18 +29,23 @@ CV: `CPrintToChatAll("%N gave you {highlight}AK-47{default}!", client)`<br/>
 
 public OnPluginStart()
 {
-	CSetPrefix("TEST"); // Set plugin chat prefix to "TEST" (will be used in every print function)
-	
-	HookEvent("round_start", Event_RoundStart);
+	CSetPrefix("KillInfo"); // Set plugin chat prefix to "KillInfo" (will be used in every print function)
+
+	HookEvent("player_death", Event_PlayerDeath);
 }
 
-public Action:Event_RoundStart(Handle:event, const String name[], bool:dontBroadcast) 
-{ 
-	CPrintToChatAll("Round started!"); // "{prefix}[TEST] {default}Round started!" -> "[TEST] Round started!"
+public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast) 
+{
+	new victim = GetClientOfUserId(GetEventInt(event, "userid"));
+	new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 	
-	CSkipNextPrefix(); // don't use prefix for next print function
-	CPrintToChatAll("Round message!"); // "{default}Round message!" -> "Round message!"
+	CPrintToChatAll("{player %d}%N {default} killed {player %d}%N", attacker, attacker, victim, victim);
+	// {prefix}[KillInfo] {teamcolor}Will {default}killed {teamcolor}Mark
+	
+	CPrintToChat(victim, "{highlight}Player {player %d}%N {highlight}killed you!", attacker, attacker);
+	// {prefix}[KillInfo] {highlight}Player {teamcolor}Will {highlight}killed you!
 	
 	return Plugin_Continue; 
 }
+
 ```
