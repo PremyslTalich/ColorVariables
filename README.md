@@ -15,7 +15,7 @@ For example, changing chat prefix color requires to edit just one line in `color
 1. Create a plugin with ColorVariables
 2. Use color variables in chat messages and not actual colors
 3. If you need some new variables, create them with `CAddVariable`
-4. If you want, you can create a forwarded variable for other plugins to use (like `{isRebel CLIENT_INDEX}`, `{isZombie CLIENT_INDEX}`, `{rainbow}` etc.)
+4. If you want, you can create a forwarded variable for other plugins to use (like `{@isRebel CLIENT_INDEX}`, `{@isZombie CLIENT_INDEX}`, `{@rainbow}` etc.)
 5. If you want to use variables from other plugins, load them with `CLoadPluginConfig` or `CLoadPluginVariables` (If server master renamed plugin binary, this won't work!)
 
 **Quick example:**<br/>
