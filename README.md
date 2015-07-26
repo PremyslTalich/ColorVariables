@@ -131,6 +131,6 @@ Variable         | Usage
 - Older engine versions (CS:S, TF2, HL2, DOD:S, ...)
   - [Dr. McKay's More Colors](https://www.doctormckay.com/morecolors.php)
 - Newer engine versions (CS:GO, ...)
-  - [obrázek]()
+  - ![CS:GO colors](https://raw.githubusercontent.com/KissLick/ColorVariables/master/csgo%20colors.png)
 - Engine colors (usability depends on engine version)
   - `{engine 1}`, `{engine 2}`, `{engine 3}`, ..., `{engine 16}`
