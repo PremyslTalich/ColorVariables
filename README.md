@@ -10,6 +10,10 @@ For example, changing chat prefix color requires to edit just one line in `color
 1. Instal plugin
 2. Optional: Edit `colorvariables/global.cfg` to set global variables for all plugins with ColorVariables (recommended with first ColorVariables plugin)
 3. Optional: Edit `colorvariables/plugin.PLUGIN_NAME.cfg` to set plugin's "local" variables as you wish
+  - `"{newcolor}" "{darkred}"`
+    - **NOT** `"{newcolor}" "darkred"`
+  - `"{newcolor}" "{#FF0000}"`
+    - **NOT** `"{newcolor}" "#FF0000"`
 
 #####Plugin developer:
 1. Create a plugin with ColorVariables
@@ -63,18 +67,6 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 
 Newer variables declarations overwrites the older ones.
 
-
-###Creating new variables
-
-- Server master
- - in `global.cfg` or `plugin.PLUGIN_NAME.cfg`
-  - Examples: 
-   - `"{newcolor}" "{darkred}"`
-      - **NOT** `"{newcolor}" "darkred"`
-   - `"{newcolor}" "{#FF0000}"`
-      - **NOT** `"{newcolor}" "#FF0000"`
-- Plugin
- - `CAddVariable`
 
 
 ###Redirecting variables
