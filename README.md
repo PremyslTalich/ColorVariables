@@ -49,3 +49,96 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 }
 
 ```
+
+###Configs & variables loading order
+
+1. Predefined variables (viz. [Predefined variables](#predefined_engine-variables))
+2. `colorvariables/global.cfg`
+  - Global config loaded by every plugin
+  - Cannot contain redirects outside of `global.cfg` or predefined variables
+3. `colorvariables/plugin.PLUGIN_NAME.cfg`
+  - `CAddVariable` and `CSavePrefix` write to this config
+  - Can be loaded by 3rd party plugins with `CLoadPluginConfig` or `CLoadPluginVariables`
+4. Optional: `CAddVariable`, `CLoadPluginConfig` and `CLoadPluginVariables`
+
+Newer variables declarations overwrites the older ones.
+
+
+###Creating new variables
+
+- Server master
+ - in `global.cfg` or `plugin.PLUGIN_NAME.cfg`
+  - Examples: 
+   - `"{newcolor}" "{darkred}"`
+      - **NOT** `"{newcolor}" "darkred"`
+   - `"{newcolor}" "{#FF0000}"`
+      - **NOT** `"{newcolor}" "#FF0000"`
+- Plugin
+ - `CAddVariable`
+
+
+###Redirecting variables
+
+- Every variable can be redirected to another (except direct colors and forwarded variables)
+  - `"mycolor" "{nicecolor}"`
+- Variable can be redirected 10x at max
+
+
+###Direct colors
+
+- Starts with `#`
+- Has two different "mods", RGB `{#RRGGBB}` and RGBA `{#RRGGBBAA}`
+- Works only in older versions of engine (CS:S, TF2, HL2, DOD:S, ...) - **NOT CS:GO!**
+- Of course, direct color cannot be redirected
+
+
+###Forwarded variables - *"Clever" variables*
+
+- Name starts with `@` and cannot contain whitespace
+- Can pass a single argument `{@playerteam 15}` separated by a whitespace
+  - `PrintToChatAll("Player {@playerteam %d}%N {defalut}has died!", client, client);`
+- Won't work if their parental plugin is not loaded
+- For parental plugin:
+  - Use forward `public COnForwardedVariable(String:sCode[], String:sData[], iDataSize, String:sColor[], iColorSize)` to catch your variable
+  - Must return actual color code - cannot be redirected (use `CGetColor` to get actual color code)
+
+
+###Chat prefix
+
+- No prefix by default, could be set with `CSetPrefix`
+- Works in `CPrintToChat`, `CPrintToChatAll`, `CPrintToChatTeam`, `CPrintToChatAdmins` and `CReplyToCommand`
+- Message format: `"{prefix}[Prefix] {default}Message"` (`{reply2cmd}` in case of `CReplyToCommand`)
+- Could be turned off for the next use with `CSkipNextPrefix`
+- Could be set saved to plugin config file with `CSavePrefix` (other plugins can load it via `CLoadPluginConfig`)
+
+
+###Message author
+
+- No author by default
+- Works in `CPrintToChat`, `CPrintToChatAll`, `CPrintToChatTeam` and `CPrintToChatAdmins`
+- Must by set with `CSetNextAuthor` to use in next message
+
+###<a name="predefined_engine-variables"></a>Predefined & Engine variables
+Variable         | Usage
+---------------- | -------------
+`{prefix}`       | Chat prefix color
+`{default}`      | Chat message color
+`{reply2cmd}`    | Reply to command message color
+`{showactivity}` | Show activity message color
+|
+`{error}`        | Error content color
+`{highlight}`    | Highlighted content color
+`{player}`       | Highlight player in message (could be used as `{player CLIENT_INDEX}` to get a player's team color)
+`{settings}`     | Settings content color
+`{command}`      | Highlight command in message
+|
+`{team0}`        | Spectator color
+`{team1}`        | Terrorists, Red team color
+`{team2}`        | Counter-Terrorists, Blue team color
+
+- Older engine versions (CS:S, TF2, HL2, DOD:S, ...)
+  - [Dr. McKay's More Colors](https://www.doctormckay.com/morecolors.php)
+- Newer engine versions (CS:GO, ...)
+  - [obrázek]()
+- Engine colors (usability depends on engine version)
+  - `{engine 1}`, `{engine 2}`, `{engine 3}`, ..., `{engine 16}`
