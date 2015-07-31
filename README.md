@@ -10,8 +10,8 @@ For example, changing chat prefix color requires to edit just one line in `color
 
 #####Server master:
 1. Instal plugin
-2. Optional: Edit `colorvariables/global.cfg` to set global variables for all plugins with ColorVariables (recommended with first ColorVariables plugin)
-3. Optional: Edit `colorvariables/plugin.PLUGIN_NAME.cfg` to set plugin's "local" variables as you wish
+2. *Optional:* Edit `colorvariables/global.cfg` to set global variables for all plugins with ColorVariables (recommended with first ColorVariables plugin)
+3. *Optional:* Edit `colorvariables/plugin.PLUGIN_NAME.cfg` to set plugin's "local" variables as you wish
   - `"{newcolor}" "{darkred}"`
     - **NOT** `"{newcolor}" "darkred"`
   - `"{newcolor}" "{#FF0000}"`
@@ -20,9 +20,9 @@ For example, changing chat prefix color requires to edit just one line in `color
 #####Plugin developer:
 1. Create a plugin with ColorVariables
 2. Use color variables in chat messages and not actual colors
-3. If you need some new variables, create them with `CAddVariable`
-4. If you want, you can create a forwarded variable for other plugins to use (like `{@isRebel CLIENT_INDEX}`, `{@isZombie CLIENT_INDEX}`, `{@rainbow}` etc.)
-5. If you want to use variables from other plugins, load them with `CLoadPluginConfig` or `CLoadPluginVariables` (If server master renamed plugin binary, this won't work!)
+3. *Optional:* If you need some new variables, create them with `CAddVariable`
+4. *Optional:* If you want, you can create a forwarded variable for other plugins to use (like `{@isRebel CLIENT_INDEX}`, `{@isZombie CLIENT_INDEX}`, `{@rainbow}` etc.)
+5. *Optional:* If you want to use variables from other plugins, load them with `CLoadPluginConfig` or `CLoadPluginVariables` (If server master renamed plugin binary, this won't work!)
 
 **Quick example:**<br/>
 Normal: `PrintToChatAll("\x02[prefix]\x01 %N gave you \x03AK-47\x01!", client)`<br/>
