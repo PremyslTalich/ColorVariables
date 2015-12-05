@@ -516,6 +516,11 @@ stock bool:Init()
 	new String:sDirectoryPath[PLATFORM_MAX_PATH];
 	new Handle:hConfig = INVALID_HANDLE;
 	GetPluginFilename(INVALID_HANDLE, sPluginName, sizeof(sPluginName));
+	ReplaceStringEx(sPluginName, sizeof(sPluginName), "\\", "/");
+	new iSlash = FindCharInString(sPluginName, '/', true);
+	if (iSlash > -1) {
+		strcopy(sPluginName, sizeof(sPluginName), sPluginName[iSlash + 1]);
+	}	
 	ReplaceStringEx(sPluginName, sizeof(sPluginName), ".smx", "");
 
 	BuildPath(Path_SM, sDirectoryPath, sizeof(sDirectoryPath), "%s/", _CV_CONFIG_DIRECTORY);
