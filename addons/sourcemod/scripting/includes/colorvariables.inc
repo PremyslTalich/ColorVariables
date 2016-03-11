@@ -788,7 +788,7 @@ stock static AddColors(Handle:hTrie)
 	if (IsSource2009()) {
 		SetTrieString(hTrie, "default", "\x01");
 		SetTrieString(hTrie, "teamcolor", "\x03");
-		
+
 		SetTrieString(hTrie, "aliceblue", "\x07F0F8FF");
 		SetTrieString(hTrie, "allies", "\x074D7942");
 		SetTrieString(hTrie, "ancient", "\x07EB4B4B");
