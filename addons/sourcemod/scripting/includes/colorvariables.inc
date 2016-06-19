@@ -144,13 +144,13 @@ stock CPrintToChatAdmins(iBitFlags, const String:sMessage[], any:...)
 	new AdminId:iAdminID;
 
 	for (new iClient = 1; iClient <= MaxClients; iClient++) {
-		if (!IsClientInGame(iClient) || GetClientTeam(iClient) != iTeam || g_bSkipPlayers[iClient]) {
+		if (!IsClientInGame(iClient) || g_bSkipPlayers[iClient]) {
 			g_bSkipPlayers[iClient] = false;
 			continue;
 		}
 
 		iAdminID = GetUserAdmin(iClient);
-		if (iAdminID == INVALID_ADMIN_ID || GetAdminFlags(iAdminID, Access_Effective) ~ iBitFlags) {
+		if (iAdminID == INVALID_ADMIN_ID || !(GetAdminFlags(iAdminID, Access_Effective) & iBitFlags)) {
 			continue;
 		}
 
