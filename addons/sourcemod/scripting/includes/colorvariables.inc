@@ -4,53 +4,54 @@
 #define _colorvariables_included "1.3"
 
 // Author: Raska aka KissLick
+// Syntax update: Keith Warren (Drixevel) (redwerewolf on Allied Mods)
 
 // ----------------------------------------------------------------------------------------
 #define _CV_MAX_MESSAGE_LENGTH 		1024
 #define _CV_MAX_VARIABLE_REDIRECTS 	10
 #define _CV_CONFIG_DIRECTORY 		"configs/colorvariables"
 
-static bool:g_bInit = false;
-static Handle:g_hColors = INVALID_HANDLE;
-static String:g_sConfigGlobal[PLATFORM_MAX_PATH];
-static String:g_sConfig[PLATFORM_MAX_PATH];
-static String:g_sChatPrefix[64] = "";
+static bool g_bInit = false;
+static Handle g_hColors = INVALID_HANDLE;
+static char g_sConfigGlobal[PLATFORM_MAX_PATH];
+static char g_sConfig[PLATFORM_MAX_PATH];
+static char g_sChatPrefix[64] = "";
 
-static bool:g_bIgnorePrefix = false;
-static g_iAuthor;
-static bool:g_bSkipPlayers[MAXPLAYERS + 1] = {false, ...};
+static bool g_bIgnorePrefix = false;
+static int g_iAuthor;
+static bool g_bSkipPlayers[MAXPLAYERS + 1] = {false, ...};
 
-static Handle:g_hForwardedVariable;
+static Handle g_hForwardedVariable;
 
 enum triple {
 	unknown = -1,
 	yes = true,
 	no = false
-}
-static triple:g_IsSource2009 = unknown;
+};
+static triple g_IsSource2009 = unknown;
 // ----------------------------------------------------------------------------------------
 
-forward COnForwardedVariable(String:sCode[], String:sData[], iDataSize, String:sColor[], iColorSize);
+forward void COnForwardedVariable(char[] sCode, char[] sData, int iDataSize, char[] sColor, int iColorSize);
 
-stock CSetPrefix(const String:sPrefix[], any:...)
+stock void CSetPrefix(const char[] sPrefix, any ...)
 {
 	VFormat(g_sChatPrefix, sizeof(g_sChatPrefix), sPrefix, 2);
 }
 
-stock CSavePrefix(const String:sPrefix[], any:...)
+stock void CSavePrefix(const char[] sPrefix, any ...)
 {
-	new String:m_sPrefix[64];
+	char m_sPrefix[64];
 	VFormat(m_sPrefix, sizeof(m_sPrefix), sPrefix, 2);
 
 	CAddVariable("&prefix", m_sPrefix, true);
 }
 
-stock CSkipNextPrefix()
+stock void CSkipNextPrefix()
 {
 	g_bIgnorePrefix = true;
 }
 
-stock CSetNextAuthor(iClient)
+stock void CSetNextAuthor(int iClient)
 {
 	if (iClient < 1 || iClient > MaxClients || !IsClientInGame(iClient)) {
 		ThrowError("Invalid client index %i", iClient);
@@ -58,7 +59,7 @@ stock CSetNextAuthor(iClient)
 	g_iAuthor = iClient;
 }
 
-stock CSkipNextClient(iClient)
+stock void CSkipNextClient(int iClient)
 {
 	if (iClient < 1 || iClient > MaxClients) {
 		ThrowError("Invalid client index %i", iClient);
@@ -66,7 +67,7 @@ stock CSkipNextClient(iClient)
 	g_bSkipPlayers[iClient] = true;
 }
 
-stock CPrintToChat(iClient, const String:sMessage[], any:...)
+stock void CPrintToChat(int iClient, const char[] sMessage, any ...)
 {
 	if (iClient < 1 || iClient > MaxClients) {
 		ThrowError("Invalid client index %d", iClient);
@@ -76,7 +77,7 @@ stock CPrintToChat(iClient, const String:sMessage[], any:...)
 		ThrowError("Client %d is not in game", iClient);
 	}
 
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
 
@@ -90,11 +91,11 @@ stock CPrintToChat(iClient, const String:sMessage[], any:...)
 	g_iAuthor = 0;
 }
 
-stock CPrintToChatAll(const String:sMessage[], any:...)
+stock void CPrintToChatAll(const char[] sMessage, any ...)
 {
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (!IsClientInGame(iClient) || g_bSkipPlayers[iClient]) {
 			g_bSkipPlayers[iClient] = false;
 			continue;
@@ -114,11 +115,11 @@ stock CPrintToChatAll(const String:sMessage[], any:...)
 	g_iAuthor = 0;
 }
 
-stock CPrintToChatTeam(iTeam, const String:sMessage[], any:...)
+stock void CPrintToChatTeam(int iTeam, const char[] sMessage, any ...)
 {
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (!IsClientInGame(iClient) || GetClientTeam(iClient) != iTeam || g_bSkipPlayers[iClient]) {
 			g_bSkipPlayers[iClient] = false;
 			continue;
@@ -138,12 +139,12 @@ stock CPrintToChatTeam(iTeam, const String:sMessage[], any:...)
 	g_iAuthor = 0;
 }
 
-stock CPrintToChatAdmins(iBitFlags, const String:sMessage[], any:...)
+stock void CPrintToChatAdmins(int iBitFlags, const char[] sMessage, any ...)
 {
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
-	new AdminId:iAdminID;
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	AdminId iAdminID;
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		if (!IsClientInGame(iClient) || g_bSkipPlayers[iClient]) {
 			g_bSkipPlayers[iClient] = false;
 			continue;
@@ -168,7 +169,7 @@ stock CPrintToChatAdmins(iBitFlags, const String:sMessage[], any:...)
 	g_iAuthor = 0;
 }
 
-stock CReplyToCommand(iClient, const String:sMessage[], any:...)
+stock void CReplyToCommand(int iClient, const char[] sMessage, any ...)
 {
 	if (iClient < 0 || iClient > MaxClients) {
 		ThrowError("Invalid client index %d", iClient);
@@ -178,7 +179,7 @@ stock CReplyToCommand(iClient, const String:sMessage[], any:...)
 		ThrowError("Client %d is not in game", iClient);
 	}
 
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
 
@@ -193,7 +194,7 @@ stock CReplyToCommand(iClient, const String:sMessage[], any:...)
 	}
 }
 
-stock CShowActivity(iClient, const String:sMessage[], any:...)
+stock void CShowActivity(int iClient, const char[] sMessage, any ...)
 {
 	if (iClient < 0 || iClient > MaxClients) {
 		ThrowError("Invalid client index %d", iClient);
@@ -203,7 +204,7 @@ stock CShowActivity(iClient, const String:sMessage[], any:...)
 		ThrowError("Client %d is not in game", iClient);
 	}
 
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 3);
 	Format(sBuffer, sizeof(sBuffer), "{showactivity}%s", sBuffer);
@@ -213,7 +214,7 @@ stock CShowActivity(iClient, const String:sMessage[], any:...)
 	ShowActivity(iClient, "%s", sBuffer);
 }
 
-stock CShowActivityEx(iClient, const String:sTag[], const String:sMessage[], any:...)
+stock void CShowActivityEx(int iClient, const char[] sTag, const char[] sMessage, any ...)
 {
 	if (iClient < 0 || iClient > MaxClients) {
 		ThrowError("Invalid client index %d", iClient);
@@ -223,7 +224,7 @@ stock CShowActivityEx(iClient, const String:sTag[], const String:sMessage[], any
 		ThrowError("Client %d is not in game", iClient);
 	}
 
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH], String:sBufferTag[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH]; char sBufferTag[_CV_MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 4);
 	Format(sBuffer, sizeof(sBuffer), "{showactivity}%s", sBuffer);
@@ -236,7 +237,7 @@ stock CShowActivityEx(iClient, const String:sTag[], const String:sMessage[], any
 	ShowActivityEx(iClient, sBufferTag, " %s", sBuffer);
 }
 
-stock CShowActivity2(iClient, const String:sTag[], const String:sMessage[], any:...)
+stock void CShowActivity2(int iClient, const char[] sTag, const char[] sMessage, any ...)
 {
 	if (iClient < 0 || iClient > MaxClients) {
 		ThrowError("Invalid client index %d", iClient);
@@ -246,7 +247,7 @@ stock CShowActivity2(iClient, const String:sTag[], const String:sMessage[], any:
 		ThrowError("Client %d is not in game", iClient);
 	}
 
-	decl String:sBuffer[_CV_MAX_MESSAGE_LENGTH], String:sBufferTag[_CV_MAX_MESSAGE_LENGTH];
+	char sBuffer[_CV_MAX_MESSAGE_LENGTH]; char sBufferTag[_CV_MAX_MESSAGE_LENGTH];
 	SetGlobalTransTarget(iClient);
 	VFormat(sBuffer, sizeof(sBuffer), sMessage, 4);
 	Format(sBuffer, sizeof(sBuffer), "{showactivity}%s", sBuffer);
@@ -259,7 +260,7 @@ stock CShowActivity2(iClient, const String:sTag[], const String:sMessage[], any:
 	ShowActivityEx(iClient, sBufferTag, " %s", sBuffer);
 }
 
-stock CAddVariable(String:sName[], String:sValue[], bool:bOnlySaveToConfig = false)
+stock void CAddVariable(char[] sName, char[] sValue, bool bOnlySaveToConfig = false)
 {
 	if (Init()) {
 		if (!FileExists(g_sConfig)) {
@@ -267,7 +268,7 @@ stock CAddVariable(String:sName[], String:sValue[], bool:bOnlySaveToConfig = fal
 			return;
 		}
 
-		new Handle:hKV = CreateKeyValues("colorvariables");
+		Handle hKV = CreateKeyValues("colorvariables");
 
 		if (!FileToKeyValues(hKV, g_sConfig)) {
 			CloseHandle(hKV);
@@ -280,7 +281,7 @@ stock CAddVariable(String:sName[], String:sValue[], bool:bOnlySaveToConfig = fal
 			KvSetString(hKV, sName, sValue);
 
 			if (!bOnlySaveToConfig) {
-				new Handle:hRedirect = CreateArray(64);
+				Handle hRedirect = CreateArray(64);
 				PushArrayString(hRedirect, sName);
 				SetTrieString(g_hColors, sName, sValue);
 				SolveRedirects(g_hColors, hRedirect);
@@ -294,10 +295,10 @@ stock CAddVariable(String:sName[], String:sValue[], bool:bOnlySaveToConfig = fal
 	}
 }
 
-stock CLoadPluginConfig(const String:sPluginName[], bool:bAllowPrefix = true)
+stock void CLoadPluginConfig(const char[] sPluginName, bool bAllowPrefix = true)
 {
 	if (Init()) {
-		new String:sConfig[PLATFORM_MAX_PATH];
+		char sConfig[PLATFORM_MAX_PATH];
 		strcopy(sConfig, sizeof(sConfig), sPluginName);
 		ReplaceStringEx(sConfig, sizeof(sConfig), ".smx", "");
 		BuildPath(Path_SM, sConfig, sizeof(sConfig), "%s/plugin.%s.cfg", _CV_CONFIG_DIRECTORY, sConfig);
@@ -307,17 +308,17 @@ stock CLoadPluginConfig(const String:sPluginName[], bool:bAllowPrefix = true)
 			return;
 		}
 
-		new Handle:hRedirect = CreateArray(64);
+		Handle hRedirect = CreateArray(64);
 		LoadConfigFile(g_hColors, sConfig, hRedirect, bAllowPrefix);
 		SolveRedirects(g_hColors, hRedirect);
 		CloseHandle(hRedirect);
 	}
 }
 
-stock CLoadPluginVariables(const String:sPluginName[], const String:sVariables[][], iVariablesCount, bool:bAllowPrefix = true)
+stock void CLoadPluginVariables(const char[] sPluginName, const char[][] sVariables, int iVariablesCount, bool bAllowPrefix = true)
 {
 	if (Init() && iVariablesCount > 0) {
-		new String:sConfig[PLATFORM_MAX_PATH];
+		char sConfig[PLATFORM_MAX_PATH];
 		strcopy(sConfig, sizeof(sConfig), sPluginName);
 		ReplaceStringEx(sConfig, sizeof(sConfig), ".smx", "");
 		BuildPath(Path_SM, sConfig, sizeof(sConfig), "%s/plugin.%s.cfg", _CV_CONFIG_DIRECTORY, sConfig);
@@ -327,15 +328,15 @@ stock CLoadPluginVariables(const String:sPluginName[], const String:sVariables[]
 			return;
 		}
 
-		new Handle:hVariables = CreateTrie();
-		new Handle:hRedirect = CreateArray(64);
+		Handle hVariables = CreateTrie();
+		Handle hRedirect = CreateArray(64);
 		LoadConfigFile(hVariables, sConfig, hRedirect, bAllowPrefix);
 		SolveRedirects(hVariables, hRedirect);
 		ClearArray(hRedirect);
 
-		new String:sCode[64], String:sColor[64];
+		char sCode[64]; char sColor[64];
 
-		for (new i = 0; i < iVariablesCount; i++) {
+		for (int i = 0; i < iVariablesCount; i++) {
 			strcopy(sCode, sizeof(sCode), sVariables[i]);
 			StringToLower(sCode);
 
@@ -351,22 +352,22 @@ stock CLoadPluginVariables(const String:sPluginName[], const String:sVariables[]
 	}
 }
 
-stock CRemoveColors(String:sMsg[], iSize)
+stock void CRemoveColors(char[] sMsg, int iSize)
 {
 	CProcessVariables(sMsg, iSize, true);
 }
 
-stock CProcessVariables(String:sMsg[], iSize, bool:bRemoveColors = false)
+stock void CProcessVariables(char[] sMsg, int iSize, bool bRemoveColors = false)
 {
 	if (!Init()) {
 		return;
 	}
 
-	new String:sOut[iSize], String:sCode[iSize], String:sColor[iSize];
-	new iOutPos = 0, iCodePos = -1;
-	new iMsgLen = strlen(sMsg);
+	char[] sOut = new char[iSize]; char[] sCode = new char[iSize]; char[] sColor = new char[iSize];
+	int iOutPos = 0; int iCodePos = -1;
+	int iMsgLen = strlen(sMsg);
 
-	for (new i = 0; i < iMsgLen; i++) {
+	for (int i = 0; i < iMsgLen; i++) {
 		if (sMsg[i] == '{') {
 			iCodePos = 0;
 		}
@@ -407,14 +408,14 @@ stock CProcessVariables(String:sMsg[], iSize, bool:bRemoveColors = false)
 	strcopy(sMsg, iSize, sOut);
 }
 
-stock bool:CGetColor(const String:sName[], String:sColor[], iColorSize)
+stock bool CGetColor(const char[] sName, char[] sColor, int iColorSize)
 {
 	if (sName[0] == '\0')
 		return false;
 
 	if (sName[0] == '@') {
-		new iSpace;
-		new String:sData[64], String:m_sName[64];
+		int iSpace;
+		char sData[64]; char m_sName[64];
 		strcopy(m_sName, sizeof(m_sName), sName[1]);
 
 		if ((iSpace = FindCharInString(m_sName, ' ')) != -1 && (iSpace + 1 < strlen(m_sName))) {
@@ -466,18 +467,18 @@ stock bool:CGetColor(const String:sName[], String:sColor[], iColorSize)
 	return false;
 }
 
-stock bool:CExistColor(const String:sName[])
+stock bool CExistColor(const char[] sName)
 {
 	if (sName[0] == '\0' || sName[0] == '@' || sName[0] == '#')
 		return false;
 
-	new String:sColor[64];
+	char sColor[64];
 	return GetTrieString(g_hColors, sName, sColor, sizeof(sColor));
 }
 
-stock CSayText2(iClient, String:sMessage[], iAuthor)
+stock void CSayText2(int iClient, char[] sMessage, int iAuthor)
 {
-	new Handle:hMsg = StartMessageOne("SayText2", iClient, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
+	Handle hMsg = StartMessageOne("SayText2", iClient, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
 	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(hMsg, "ent_idx", iAuthor);
 		PbSetBool(hMsg, "chat", true);
@@ -494,7 +495,7 @@ stock CSayText2(iClient, String:sMessage[], iAuthor)
 	EndMessage();
 }
 
-stock CAddWhiteSpace(String:sBuffer[], iSize)
+stock void CAddWhiteSpace(char[] sBuffer, int iSize)
 {
 	if (!IsSource2009()) {
 		Format(sBuffer, iSize, " %s", sBuffer);
@@ -505,16 +506,16 @@ stock CAddWhiteSpace(String:sBuffer[], iSize)
 // Private stuff
 // ----------------------------------------------------------------------------------------
 
-stock bool:Init()
+stock bool Init()
 {
 	if (g_bInit) {
 		LoadColors();
 		return true;
 	}
 
-	new String:sPluginName[PLATFORM_MAX_PATH];
-	new String:sDirectoryPath[PLATFORM_MAX_PATH];
-	new Handle:hConfig = INVALID_HANDLE;
+	char sPluginName[PLATFORM_MAX_PATH];
+	char sDirectoryPath[PLATFORM_MAX_PATH];
+	Handle hConfig = INVALID_HANDLE;
 	GetPluginFilename(INVALID_HANDLE, sPluginName, sizeof(sPluginName));
 	ReplaceStringEx(sPluginName, sizeof(sPluginName), "\\", "/");
 	new iSlash = FindCharInString(sPluginName, '/', true);
@@ -527,7 +528,7 @@ stock bool:Init()
 	if (!DirExists(sDirectoryPath))
 		CreateDirectory(sDirectoryPath, 511);
 
-	new String:sGlobalVariableList[15][2][64] = {
+	char sGlobalVariableList[15][2][64] = {
 		{"prefix", 		 "{engine 2}"},
 		{"default",		 "{engine 1}"},
 		{"reply2cmd",  	 "{engine 1}"},
@@ -562,7 +563,7 @@ stock bool:Init()
 		WriteFileLine(hConfig, "// Version: %s", _colorvariables_included);
 		WriteFileLine(hConfig, "\"colorvariables\"");
 		WriteFileLine(hConfig, "{");
-		for (new i = 0; i < 15; i++) {
+		for (int i = 0; i < 15; i++) {
 			if (sGlobalVariableList[i][0][0] == '\0') {
 				WriteFileLine(hConfig, "");
 			} else {
@@ -596,7 +597,7 @@ stock bool:Init()
 				return false;
 			}
 
-			for (new i = 0; i < 15; i++) {
+			for (int i = 0; i < 15; i++) {
 				if (sGlobalVariableList[i][0][0] == '\0')
 					continue;
 
@@ -647,7 +648,7 @@ stock bool:Init()
 		hConfig = INVALID_HANDLE;
 	}
 
-	for (new iClient = 1; iClient <= MaxClients; iClient++) {
+	for (int iClient = 1; iClient <= MaxClients; iClient++) {
 		g_bSkipPlayers[iClient] = false;
 	}
 
@@ -658,11 +659,11 @@ stock bool:Init()
 	return true;
 }
 
-stock static LoadColors()
+stock void LoadColors()
 {
 	if (g_hColors == INVALID_HANDLE) {
 		g_hColors = CreateTrie();
-		new Handle:hRedirect = CreateArray(64);
+		Handle hRedirect = CreateArray(64);
 
 		AddColors(g_hColors);
 		LoadConfigFile(g_hColors, g_sConfigGlobal, hRedirect);
@@ -673,14 +674,14 @@ stock static LoadColors()
 	}
 }
 
-stock static LoadConfigFile(Handle:hTrie, String:sPath[], Handle:hRedirect, bool:bAllowPrefix = true)
+stock void LoadConfigFile(Handle hTrie, char[] sPath, Handle hRedirect, bool bAllowPrefix = true)
 {
 	if (!FileExists(sPath)) {
 		LogError("Cannot load color variables from file '%s' - file doesn't exist!", sPath);
 		return;
 	}
 
-	new Handle:hKV = CreateKeyValues("colorvariables");
+	Handle hKV = CreateKeyValues("colorvariables");
 
 	if (!FileToKeyValues(hKV, sPath)) {
 		CloseHandle(hKV);
@@ -693,7 +694,7 @@ stock static LoadConfigFile(Handle:hTrie, String:sPath[], Handle:hRedirect, bool
 		return;
 	}
 
-	new String:sCode[64], String:sColor[64];
+	char sCode[64]; char sColor[64];
 
 	do
 	{
@@ -726,12 +727,12 @@ stock static LoadConfigFile(Handle:hTrie, String:sPath[], Handle:hRedirect, bool
 	CloseHandle(hKV);
 }
 
-stock static SolveRedirects(Handle:hTrie, Handle:hRedirect)
+stock void SolveRedirects(Handle hTrie, Handle hRedirect)
 {
-	new String:sCode[64], String:sRedirect[64], String:sColor[64], String:sFirstColor[64];
-	new iRedirectLife, bool:bHasBrackets;
+	char sCode[64]; char sRedirect[64]; char sColor[64]; char sFirstColor[64];
+	int iRedirectLife; bool bHasBrackets;
 
-	for (new i = 0; i < GetArraySize(hRedirect); i++) {
+	for (int i = 0; i < GetArraySize(hRedirect); i++) {
 		GetArrayString(hRedirect, i, sRedirect, sizeof(sRedirect));
 		strcopy(sCode, sizeof(sCode), sRedirect);
 		bHasBrackets = true;
@@ -768,14 +769,14 @@ stock static SolveRedirects(Handle:hTrie, Handle:hRedirect)
 	}
 }
 
-stock static HasBrackets(const String:sSource[])
+stock bool HasBrackets(const char[] sSource)
 {
 	return (sSource[0] == '{' && sSource[strlen(sSource) - 1] == '}');
 }
 
-stock static StringToLower(String:sSource[])
+stock void StringToLower(char[] sSource)
 {
-	for (new i = 0; i < strlen(sSource); i++) {
+	for (int i = 0; i < strlen(sSource); i++) {
 		if (sSource[i] == '\0')
 			break;
 
@@ -783,7 +784,7 @@ stock static StringToLower(String:sSource[])
 	}
 }
 
-stock static AddColors(Handle:hTrie)
+stock void AddColors(Handle hTrie)
 {
 	if (IsSource2009()) {
 		SetTrieString(hTrie, "default", "\x01");
@@ -1001,17 +1002,17 @@ stock static AddColors(Handle:hTrie)
 	SetTrieString(hTrie, "engine 16", "\x10");
 }
 
-stock static bool:IsSource2009()
+stock bool IsSource2009()
 {
 	if (g_IsSource2009 == unknown) {
 		new EngineVersion:iEngineVersion = GetEngineVersion();
 		g_IsSource2009 = (iEngineVersion == Engine_CSS || iEngineVersion == Engine_TF2 || iEngineVersion == Engine_HL2DM || iEngineVersion == Engine_DODS) ? yes : no;
 	}
 
-	return bool:g_IsSource2009;
+	return view_as<bool>(g_IsSource2009);
 }
 
-stock static AddPrefixAndDefaultColor(String:sMessage[], iSize, String:sDefaultColor[] = "default", String:sPrefixColor[] = "prefix")
+stock void AddPrefixAndDefaultColor(char[] sMessage, int iSize, char[] sDefaultColor = "default", char[] sPrefixColor = "prefix")
 {
 	if (g_sChatPrefix[0] != '\0' && !g_bIgnorePrefix) {
 		Format(sMessage, iSize, "{%s}[%s]{%s} %s", sPrefixColor, g_sChatPrefix, sDefaultColor, sMessage);
@@ -1020,7 +1021,7 @@ stock static AddPrefixAndDefaultColor(String:sMessage[], iSize, String:sDefaultC
 	}
 }
 
-stock static SendPlayerMessage(iClient, String:sMessage[], iAuthor = 0)
+stock void SendPlayerMessage(int iClient, char[] sMessage, int iAuthor  = 0)
 {
 	if (iAuthor < 1 || iAuthor > MaxClients || !IsClientInGame(iAuthor)) {
 		PrintToChat(iClient, sMessage);
