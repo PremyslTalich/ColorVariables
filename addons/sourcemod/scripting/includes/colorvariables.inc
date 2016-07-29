@@ -445,7 +445,7 @@ stock bool CGetColor(const char[] sName, char[] sColor, int iColorSize)
 			return true;
 		}
 	} else if (StrContains(sName, "player ", false) == 0 && strlen(sName) > 7) {
-		new iClient = StringToInt(sName[7]);
+		int iClient = StringToInt(sName[7]);
 
 		if (iClient < 1 || iClient > MaxClients || !IsClientInGame(iClient)) {
 			strcopy(sColor, iColorSize, "\x01");
@@ -518,7 +518,7 @@ stock bool Init()
 	Handle hConfig = INVALID_HANDLE;
 	GetPluginFilename(INVALID_HANDLE, sPluginName, sizeof(sPluginName));
 	ReplaceStringEx(sPluginName, sizeof(sPluginName), "\\", "/");
-	new iSlash = FindCharInString(sPluginName, '/', true);
+	int iSlash = FindCharInString(sPluginName, '/', true);
 	if (iSlash > -1) {
 		strcopy(sPluginName, sizeof(sPluginName), sPluginName[iSlash + 1]);
 	}	
@@ -581,7 +581,7 @@ stock bool Init()
 			return false;
 		}
 
-		new String:sVersionLine[64];
+		char sVersionLine[64];
 		ReadFileLine(hConfig, sVersionLine, sizeof(sVersionLine));
 		CloseHandle(hConfig);
 
@@ -589,7 +589,7 @@ stock bool Init()
 		strcopy(sVersionLine, sizeof(sVersionLine), sVersionLine[FindCharInString(sVersionLine, ':') + 2]);
 
 		if (StringToFloat(sVersionLine) < StringToFloat(_colorvariables_included)) {
-			new Handle:hKV = CreateKeyValues("colorvariables");
+			Handle hKV = CreateKeyValues("colorvariables");
 
 			if (!FileToKeyValues(hKV, g_sConfigGlobal) || !KvGotoFirstSubKey(hKV, false)) {
 				CloseHandle(hKV);
@@ -615,7 +615,7 @@ stock bool Init()
 			WriteFileLine(hConfig, "\"colorvariables\"");
 			WriteFileLine(hConfig, "{");
 
-			new String:sCode[64], String:sColor[64];
+			char sCode[64]; char sColor[64];
 
 			KvGotoFirstSubKey(hKV, false);
 			do
@@ -1005,7 +1005,7 @@ stock void AddColors(Handle hTrie)
 stock bool IsSource2009()
 {
 	if (g_IsSource2009 == unknown) {
-		new EngineVersion:iEngineVersion = GetEngineVersion();
+		EngineVersion iEngineVersion = GetEngineVersion();
 		g_IsSource2009 = (iEngineVersion == Engine_CSS || iEngineVersion == Engine_TF2 || iEngineVersion == Engine_HL2DM || iEngineVersion == Engine_DODS) ? yes : no;
 	}
 
