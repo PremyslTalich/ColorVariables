@@ -476,12 +476,12 @@ stock bool CExistColor(const char[] sName)
 	return GetTrieString(g_hColors, sName, sColor, sizeof(sColor));
 }
 
-stock void CSayText2(int iClient, char[] sMessage, int iAuthor)
+stock void CSayText2(int iClient, char[] sMessage, int iAuthor, bool bChat = true)
 {
 	Handle hMsg = StartMessageOne("SayText2", iClient, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
 	if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) {
 		PbSetInt(hMsg, "ent_idx", iAuthor);
-		PbSetBool(hMsg, "chat", true);
+		PbSetBool(hMsg, "chat", bChat);
 		PbSetString(hMsg, "msg_name", sMessage);
 		PbAddString(hMsg, "params", "");
 		PbAddString(hMsg, "params", "");
