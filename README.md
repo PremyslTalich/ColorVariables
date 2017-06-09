@@ -119,13 +119,13 @@ Variable         | Usage
 `{default}`      | Chat message color
 `{reply2cmd}`    | Reply to command message color
 `{showactivity}` | Show activity message color
-|
+---------------- | -------------
 `{error}`        | Error content color
 `{highlight}`    | Highlighted content color
 `{player}`       | Highlight player in message (could be used as `{player CLIENT_INDEX}` to get a player's team color)
 `{settings}`     | Settings content color
 `{command}`      | Highlight command in message
-|
+---------------- | -------------
 `{team0}`        | Spectator color
 `{team1}`        | Terrorists, Red team color
 `{team2}`        | Counter-Terrorists, Blue team color
