@@ -1,4 +1,4 @@
-#ColorVariables
+# ColorVariables
 ColorVariables moves setting the colors in chat messages from plugin developers to server masters. It allows server masters to set colors for all plugins (with ColorVariables) in one simple step.
 For example, changing chat prefix color requires to edit just one line in `colorvariables/global.cfg` config. And it works for one or all plugins with ColorVariables.
 
@@ -6,9 +6,9 @@ For example, changing chat prefix color requires to edit just one line in `color
 
 ---
 
-###How does it work?
+### How does it work?
 
-#####Server master:
+##### Server master:
 1. Instal plugin
 2. *Optional:* Edit `colorvariables/global.cfg` to set global variables for all plugins with ColorVariables (recommended with first ColorVariables plugin)
 3. *Optional:* Edit `colorvariables/plugin.PLUGIN_NAME.cfg` to set plugin's "local" variables as you wish
@@ -17,7 +17,7 @@ For example, changing chat prefix color requires to edit just one line in `color
   - `"{newcolor}" "{#FF0000}"`
     - **NOT** `"{newcolor}" "#FF0000"`
 
-#####Plugin developer:
+##### Plugin developer:
 1. Create a plugin with ColorVariables
 2. Use color variables in chat messages and not actual colors
 3. *Optional:* If you need some new variables, create them with `CAddVariable`
@@ -56,7 +56,7 @@ public Action:Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroa
 
 ```
 
-###Configs & variables loading order
+### Configs & variables loading order
 
 1. Predefined variables (viz. [Predefined variables](#predefined_engine-variables))
 2. `colorvariables/global.cfg`
@@ -71,14 +71,14 @@ Newer variables declarations overwrites the older ones.
 
 
 
-###Redirecting variables
+### Redirecting variables
 
 - Every variable can be redirected to another (except direct colors and forwarded variables)
   - `"mycolor" "{nicecolor}"`
 - Variable can be redirected 10x at max
 
 
-###Direct colors
+### Direct colors
 
 - Starts with `#`
 - Has two different "mods", RGB `{#RRGGBB}` and RGBA `{#RRGGBBAA}`
@@ -86,7 +86,7 @@ Newer variables declarations overwrites the older ones.
 - Of course, direct color cannot be redirected
 
 
-###Forwarded variables - *"Clever" variables*
+### Forwarded variables - *"Clever" variables*
 
 - Name starts with `@` and cannot contain whitespace
 - Can pass a single argument `{@playerteam 15}` separated by a whitespace
@@ -97,7 +97,7 @@ Newer variables declarations overwrites the older ones.
   - Must return actual color code - cannot be redirected (use `CGetColor` to get actual color code)
 
 
-###Chat prefix
+### Chat prefix
 
 - No prefix by default, could be set with `CSetPrefix`
 - Works in `CPrintToChat`, `CPrintToChatAll`, `CPrintToChatTeam`, `CPrintToChatAdmins` and `CReplyToCommand`
@@ -106,13 +106,13 @@ Newer variables declarations overwrites the older ones.
 - Could be set saved to plugin config file with `CSavePrefix` (other plugins can load it via `CLoadPluginConfig`)
 
 
-###Message author
+### Message author
 
 - No author by default
 - Works in `CPrintToChat`, `CPrintToChatAll`, `CPrintToChatTeam` and `CPrintToChatAdmins`
 - Must by set with `CSetNextAuthor` to use in next message
 
-###<a name="predefined_engine-variables"></a>Predefined & Engine variables
+### <a name="predefined_engine-variables"></a>Predefined & Engine variables
 Variable         | Usage
 ---------------- | -------------
 `{prefix}`       | Chat prefix color
