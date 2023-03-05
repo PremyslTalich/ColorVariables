@@ -1,7 +1,7 @@
 #if defined _colorvariables_included
 	#endinput
 #endif
-#define _colorvariables_included "1.3"
+#define _colorvariables_included "1.3.1"
 
 // Author: Raska aka KissLick
 
@@ -24,8 +24,8 @@ static Handle:g_hForwardedVariable;
 
 enum triple {
 	unknown = -1,
-	yes = true,
-	no = false
+	no = 0,
+	yes = 1
 }
 static triple:g_IsSource2009 = unknown;
 // ----------------------------------------------------------------------------------------
